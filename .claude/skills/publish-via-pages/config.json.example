@@ -1,0 +1,4 @@
+{
+  "_about": "Copy to config.json (gitignored) and set pagesDir to your pi-pages checkout. Alternatively set the PI_PAGES_DIR env var instead of this file.",
+  "pagesDir": "/abs/path/to/pi-pages"
+}
