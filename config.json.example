@@ -1,0 +1,25 @@
+{
+  "_about": "Single source of truth for pi-pages. Copy to config.json (gitignored) and fill in. The Cloudflare token is the ONLY secret here.",
+
+  "stateDir": "~/.pi-pages",
+  "_stateDir_note": "Where pi-pages writes its logs (<stateDir>/logs/pages.log) and the RPC driver keeps session state.",
+
+  "cloudflare": {
+    "_note": "A Cloudflare API token scoped to EXACTLY Account -> Cloudflare Pages: Edit (nothing else), plus the account id it belongs to. DNS for the custom domain is a one-time record created out-of-band; this token never needs DNS access.",
+    "api_token": "CHANGE-ME-cloudflare-pages-edit-token",
+    "account_id": "CHANGE-ME-cloudflare-account-id"
+  },
+
+  "pages": {
+    "_note": "The single Cloudflare Pages project every artifact deploys into, the local folder that is its canonical content set (artifact = one entry in it), the public domain, and the project's production branch.",
+    "project_name": "gylab-pages",
+    "artifacts_root": "~/.pi-pages/artifacts",
+    "domain": "pages.gylab.cc",
+    "production_branch": "main"
+  },
+
+  "model": "",
+  "_model_note": "pi session model for the publisher; empty = pi default.",
+  "thinking": "",
+  "_thinking_note": "Reasoning tier; empty = pi default."
+}

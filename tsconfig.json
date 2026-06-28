@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    /* Type checking is the only goal here. pi loads .ts directly via jiti,
+       so we never emit JS. */
+    "noEmit": true,
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+
+    /* Allow `import "./foo.ts"` with an explicit .ts extension, which is how
+       jiti-loaded pi extensions import sibling shared modules. */
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": false,
+
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Interop / runtime */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node", "bun"]
+  },
+  "include": ["shared/**/*.ts", "pages/**/*.ts"],
+  "exclude": ["node_modules"]
+}

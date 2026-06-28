@@ -1,0 +1,19 @@
+{
+  "name": "pi-pages",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "Standalone agentic static-artifact publisher, built on pi. A caller hands off an .html file (or a folder of static web files) over RPC; pi-pages copies it into one Cloudflare Pages site and returns the live URL. Gated single-purpose sibling of pi-deployment-manager.",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^0.78.1",
+    "@earendil-works/pi-tui": "^0.78.1",
+    "typebox": "1.1.38",
+    "@types/bun": "^1.3.14",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}
