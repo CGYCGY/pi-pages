@@ -1,4 +1,4 @@
-// Shared helpers for the publish-via-pages RPC driver. The driver summons the gated pi-pages
+// Shared helpers for the deploy-pages RPC driver. The driver summons the gated pi-pages
 // over pi's native --mode rpc (stdin/stdout JSONL, no HTTP/port) and converses with it. This
 // file owns: locating pi-pages (config only, never a hardcoded path), loading its config, the
 // pi spawn argv (THE GATE), JSONL framing, and the notify-marker contract pi-pages emits.

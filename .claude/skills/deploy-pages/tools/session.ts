@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// The publish-via-pages RPC driver. Summons the gated pi-pages over pi's native --mode rpc,
+// The deploy-pages RPC driver. Summons the gated pi-pages over pi's native --mode rpc,
 // sends the caller's natural-language request as a PROMPT, and relays pi-pages's reply — a
 // code-derived PublishResult, or a question for the caller.
 //

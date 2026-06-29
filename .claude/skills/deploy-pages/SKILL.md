@@ -1,12 +1,12 @@
 ---
-name: publish-via-pages
+name: deploy-pages
 description: Publishes a static web artifact (a single .html file, or a folder of static web files with an index.html) by conversing with the gated pi-pages agent over pi RPC — sends a natural-language publish request, answers any question it asks (e.g. a slug collision), and relays the structured result with the live URL. Use when asked to "publish this page", "put this html online", "share this as a link", "host this doc", "drop this on pages", or otherwise turn a local static file/folder into a shareable URL.
 argument-hint: <abs-path-to-file-or-folder> [list | remove <slug>]
 allowed-tools: Bash, Read, Glob
 user-invocable: true
 ---
 
-# Publish via Pages
+# Deploy Pages
 
 ## Purpose
 

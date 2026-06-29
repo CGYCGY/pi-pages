@@ -39,10 +39,10 @@ The DNS record for the custom domain (a proxied `CNAME <domain> -> <project>.pag
 
 ## Use it
 
-Over the `publish-via-pages` skill (the RPC driver):
+Over the `deploy-pages` skill (the RPC driver):
 
 ```bash
-bun .claude/skills/publish-via-pages/tools/session.ts publish "Publish /abs/path/to/doc.html"
+bun .claude/skills/deploy-pages/tools/session.ts publish "Publish /abs/path/to/doc.html"
 ```
 
 It returns a JSON line; on success `result.url` is the shareable link.

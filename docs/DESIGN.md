@@ -21,7 +21,7 @@ needing a build (Astro/Vite/TSX) belong to the manager — pi-pages refuses non-
 ## 2. Topology — service, spawn-on-demand
 
 Same shape as the manager: pi-pages is the **service**; the caller (a project agent, or the user via
-the `publish-via-pages` skill) is the client. A publish is a task that runs to completion and returns
+the `deploy-pages` skill) is the client. A publish is a task that runs to completion and returns
 — no long-lived device. State of record is **Cloudflare Pages + the local artifacts folder**; cold
 start loses nothing. The skill driver spawns pi-pages as a `pi --mode rpc` subprocess it owns
 (`up` keeps one alive for back-and-forth; `publish` cold-starts and tears down on the result).
