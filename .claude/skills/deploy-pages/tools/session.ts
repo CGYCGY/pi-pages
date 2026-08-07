@@ -395,8 +395,11 @@ function runPages(): never {
       if (current) current.result = note.result as Record<string, unknown>;
       return;
     }
-    if (msg.type === "agent_end") {
-      if (!current) return;
+    // Settle, not end: pi may follow an agent_end with an auto-retry, a compaction
+    // retry, or a queued continuation, and answering there would relay the pre-retry
+    // text while pi is still working — the next `send` would then hit a busy session.
+    if (msg.type === "agent_settled") {
+      if (!current) return; // a stray settle between requests
       send({ type: "get_last_assistant_text", id: `verdict:${current.id}` });
       return;
     }
