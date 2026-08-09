@@ -30,9 +30,9 @@ Guards fail closed: a slug collision is **refused** (the agent asks the caller t
 ## Setup
 
 ```bash
-npm install
+bun install
 cp config.json.example config.json   # fill cloudflare.api_token (Pages:Edit) + account_id
-npm run typecheck
+bun run typecheck
 ```
 
 The DNS record for the custom domain (a proxied `CNAME <domain> -> <project>.pages.dev`) is a one-time setup done out-of-band; the Pages:Edit token never needs DNS access.
