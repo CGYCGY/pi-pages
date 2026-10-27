@@ -50,7 +50,8 @@ deploy still serves), so it is a durable, configured location.
 
 ## 5. Execution layer — gated verbs, native engine in code
 
-pi-pages's LLM has **no raw Bash/Read/Write/Edit/Glob** — it sees ONLY the four semantic verbs (§7),
+pi-pages's LLM has **none of pi's built-in tools** (read/bash/edit/write; grep/find/ls are off by
+default anyway) — it sees ONLY the four semantic verbs (§7),
 pinned via `--no-builtin-tools` + `setActiveTools`. The engine is the verbs' own code:
 
 ```
@@ -67,7 +68,7 @@ pages LLM ──can only call──▶ [ publish | list | unpublish | status ]  
 | **source** | a caller-named path, allowlisted to: a single `.html`/`.htm` file, OR a directory whose every file is a static web asset (html/css/js/img/font/…) and that has an `index.html`. Caps on file count/size. Anything else REFUSED before any read. |
 | **write** | ONLY inside `artifacts_root` (slug vetted to a safe single path segment; escape refused). |
 | **network** | Cloudflare API + the deploy upload (wrangler), via config creds. |
-| **denied** | general Bash/Read/Write/Edit/Glob; any source that isn't allowlisted static web content. |
+| **denied** | pi's built-in read/bash/edit/write/grep/find/ls; any source that isn't allowlisted static web content. |
 
 The source allowlist is why "it can only publish the html I gave it" is a code fact: a `.env`/`.ts`/
 secret, or a folder carrying one, is rejected — not by an LLM rule, by a path/extension check.
