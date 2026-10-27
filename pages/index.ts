@@ -57,7 +57,7 @@ export default function pagesExtension(pi: ExtensionAPI) {
   // Extension memory, NOT LLM context.
   let activeCtx: ExtensionContext | undefined;
   let cumulativeCost = 0;
-  // Set by concludeTask so agent_end knows a task finished and can shed context.
+  // Set by concludeTask so agent_settled knows a task finished and can shed context.
   let concludedThisTurn = false;
 
   const refreshUI = (ctx?: ExtensionContext): void => {
@@ -121,7 +121,9 @@ export default function pagesExtension(pi: ExtensionAPI) {
   // After a concluded task, shed context so the next, unrelated publish starts clean. If the
   // turn did NOT conclude (the agent asked a question, e.g. a slug collision), leave context
   // in place so the caller's reply continues it.
-  pi.on("agent_end", async (_event, ctx) => {
+  // agent_settled, not agent_end: compact() first aborts the session, and inside agent_end the
+  // run is still active, so every successful publish would settle with aborted:true.
+  pi.on("agent_settled", async (_event, ctx) => {
     activeCtx = ctx;
     if (!concludedThisTurn) return;
     concludedThisTurn = false;
