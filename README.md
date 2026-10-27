@@ -13,6 +13,8 @@ Gated single-purpose sibling of `pi-deployment-manager`: where the manager deplo
 
 pi-pages's LLM sees **exactly four verbs** and nothing else — pi's built-in tools (read/bash/edit/write; grep/find/ls exist but are off by default) are disabled (`pi --mode rpc --no-builtin-tools --no-extensions -nc -ns -np`) and the active set is pinned to the verbs at session start.
 
+Its system prompt is its own: the driver's `--system-prompt` identity, then `<cwd>`, then the extension's `<pages-rules>` section. pi's stock coding-assistant preamble and its generated `<tools>`/`<rules>`/`<docs>` sections are intentionally not rendered; the verbs reach the model as tool schemas, and `<pages-rules>` names each one.
+
 | verb | r/w | does |
 |------|-----|------|
 | `publish` | write | copy a caller-named `.html`/static-folder into the site + deploy; returns the URL |

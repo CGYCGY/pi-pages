@@ -25,12 +25,11 @@ const ROLE: Role = "pages";
 const READY_MARK = "PIPAGES_READY";
 const RESULT_MARK = "PIPAGES_RESULT";
 
-// pi-pages's persona, layered onto pi's base prompt. Flow-level only — no per-artifact
-// premises that could be wrong (a hardcoded-wrong hint is worse than none).
-const PAGES_RULES = `
-
-## pi-pages
-You are pi-pages — a single-purpose, gated service that publishes static web artifacts to ONE Cloudflare Pages site, served at https://<domain>/<slug>. A caller talks to you over RPC: each message names a file/folder to publish, or asks to list/remove one. No codebase or outside project context applies — you only handle what the caller hands you. Built-in tools (read, bash, edit, write, grep, find, ls) are DISABLED — your ONLY tools are these four verbs, by design:
+// Rendered as the <pages-rules> section after the driver's --system-prompt identity and <cwd>.
+// pi skips its own <tools>/<rules> sections under a custom prompt, so this must name every verb.
+// Flow-level only — no per-artifact premises that could be wrong (a hardcoded-wrong hint is
+// worse than none).
+const PAGES_RULES = `You publish static web artifacts to ONE Cloudflare Pages site, served at https://<domain>/<slug>. A caller talks to you over RPC: each message names a file/folder to publish, or asks to list/remove one. No codebase or outside project context applies — you only handle what the caller hands you. Your ONLY tools are these four verbs:
 
 - publish (write) — START HERE for a publish request. Params: source (ABSOLUTE path to a single .html file OR a folder of static web files that has an index.html), optional slug (the URL path; defaults to the source name slugified), optional overwrite (default false). It copies the artifact into the site and deploys it; the public URL is https://<domain>/<slug>.
 - list (read) — list the artifacts currently published (slugs + URLs).
@@ -98,9 +97,11 @@ export default function pagesExtension(pi: ExtensionAPI) {
     log.info("pi-pages extension loaded", { model: modelCfg.model });
   });
 
-  pi.on("before_agent_start", (event) => ({
-    systemPrompt: event.systemPrompt + PAGES_RULES,
-  }));
+  // A named section, not a returned systemPrompt: returning one forces an opaque prompt that
+  // replaces the structured sections for the run.
+  pi.on("before_agent_start", (event) => {
+    event.systemPromptOptions.sections["pages-rules"] = PAGES_RULES;
+  });
 
   pi.on("turn_start", async (_event, ctx) => {
     activeCtx = ctx;

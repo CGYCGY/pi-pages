@@ -61,6 +61,13 @@ pages LLM ──can only call──▶ [ publish | list | unpublish | status ]  
                                    └── subprocess → `wrangler pages deploy <artifacts_root>` (the only shell-out)
 ```
 
+**System prompt** = the driver's `--system-prompt` identity (pi-pages, a gated publisher acting only
+through its verbs) → `<cwd>` → `<pages-rules>` (a named section the extension sets in
+`before_agent_start`: the site, every verb with its purpose, the caller flow). Under a custom prompt
+pi does not render its coding-assistant preamble or its `<tools>`/`<rules>`/`<docs>` sections; the verbs
+reach the model as tool schemas. A returned `systemPrompt` is avoided — it forces an opaque prompt
+over the structured sections.
+
 ### 5.1 Sandbox (the gate) — `shared/sandbox.ts`, enforced in code
 
 | capability | scope |

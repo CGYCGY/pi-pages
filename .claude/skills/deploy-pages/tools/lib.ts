@@ -101,13 +101,22 @@ export function paths(stateDir: string): Paths {
   };
 }
 
+// Replaces pi's stock coding-assistant preamble. With a custom prompt pi does NOT generate its
+// <tools>/<rules>/<docs> sections, so the verbs reach the model only as tool schemas plus the
+// extension's <pages-rules> section — this text must not lean on anything pi would have added.
+// Also suppresses discovery of a global ~/.pi/agent/SYSTEM.md.
+export const BASE_PROMPT =
+  "You are pi-pages, a gated publisher of static web pages. You act only through the verbs " +
+  "registered as tools; you have no shell, file, or network access of your own.";
+
 /**
  * The pi argv that summons pi-pages in RPC mode. THE GATE: --no-builtin-tools makes pi's
  * built-ins (read/bash/edit/write; off-by-default grep/find/ls) unrepresentable;
  * --no-extensions blocks other extensions from re-adding tools; -nc drops ambient
  * AGENTS.md/CLAUDE.md; -ns keeps user-level skills out of the system prompt; -np stops a
  * "/"-prefixed caller message being expanded as a prompt template. --mode rpc = stdin/stdout
- * JSONL.
+ * JSONL. Never -a/--approve: it would trust project-local .pi/ files (prompt files, settings)
+ * for the run.
  */
 export function piArgs(pagesDir: string, cfg: PagesCfg): string[] {
   const args = [
@@ -116,6 +125,8 @@ export function piArgs(pagesDir: string, cfg: PagesCfg): string[] {
     "-nc",
     "-ns",
     "-np",
+    "--system-prompt",
+    BASE_PROMPT,
     "--mode",
     "rpc",
     "-e",
