@@ -6,7 +6,8 @@
   "license": "MIT",
   "description": "Standalone agentic static-artifact publisher, built on pi. A caller hands off an .html file (or a folder of static web files) over RPC; pi-pages copies it into one Cloudflare Pages site and returns the live URL. Gated single-purpose sibling of pi-deployment-manager.",
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "bun test ./.claude/skills/deploy-pages/tools/"
   },
   "devDependencies": {
     "@earendil-works/pi-coding-agent": "^1.4.0",
