@@ -34,7 +34,6 @@ import {
   expandTilde,
   loadPagesCfg,
   type PagesCfg,
-  parseNotify,
   paths,
   type Paths,
   PI_NAME,
@@ -42,6 +41,7 @@ import {
   resolvePagesDir,
   takeLines,
 } from "./lib.ts";
+import { createRelay } from "./relay.ts";
 
 // A publish turn = copy + wrangler upload + health poll. Bound it generously; overridable.
 const TURN_BUDGET_MS = Number(process.env.PI_PAGES_TURN_TIMEOUT_MS) || 6 * 60_000;
@@ -332,13 +332,21 @@ function runPages(): never {
     }
   };
 
-  let current: { id: string; result?: Record<string, unknown> } | null = null;
   let timer: ReturnType<typeof setTimeout> | null = null;
-  const clearCurrent = (): void => {
-    if (timer) clearTimeout(timer);
-    timer = null;
-    current = null;
-  };
+  const relay = createRelay({
+    send,
+    finish: (out) => {
+      if (timer) clearTimeout(timer);
+      timer = null;
+      append(out);
+    },
+    onReady: () => {
+      if (!state.ready) {
+        state.ready = true;
+        writeState();
+      }
+    },
+  });
 
   const shutdown = (): void => {
     try {
@@ -361,10 +369,7 @@ function runPages(): never {
   child.on("exit", (code) => {
     state.error = `pi-pages pi exited (code ${code ?? "killed"})`;
     writeState();
-    if (current) {
-      append({ id: current.id, kind: "error", reason: "pages_down", detail: state.error });
-      clearCurrent();
-    }
+    relay.fail("pages_down", String(state.error));
     process.exit(0);
   });
 
@@ -373,45 +378,16 @@ function runPages(): never {
     buf += b.toString();
     const { lines, rest } = takeLines(buf);
     buf = rest;
-    for (const line of lines) handle(line);
-  });
-
-  function handle(line: string): void {
-    let msg: { type?: string; id?: string; data?: { text?: string } };
-    try {
-      msg = JSON.parse(line);
-    } catch {
-      return;
-    }
-    const note = parseNotify(msg);
-    if (note.ready) {
-      if (!state.ready) {
-        state.ready = true;
-        writeState();
+    for (const line of lines) {
+      let msg: unknown;
+      try {
+        msg = JSON.parse(line);
+      } catch {
+        continue;
       }
-      return;
+      relay.handle(msg);
     }
-    if (note.result !== undefined) {
-      if (current) current.result = note.result as Record<string, unknown>;
-      return;
-    }
-    // Settle, not end: pi may follow an agent_end with an auto-retry, a compaction
-    // retry, or a queued continuation, and answering there would relay the pre-retry
-    // text while pi is still working — the next `send` would then hit a busy session.
-    if (msg.type === "agent_settled") {
-      if (!current) return; // a stray settle between requests
-      send({ type: "get_last_assistant_text", id: `verdict:${current.id}` });
-      return;
-    }
-    if (msg.type === "response" && current && msg.id === `verdict:${current.id}`) {
-      const text = (msg.data?.text ?? "").trim();
-      // CONCLUDED iff pi-pages emitted its code-derived result this turn; else the assistant
-      // text is a question/status to relay back to the caller.
-      if (current.result !== undefined) append({ id: current.id, kind: "result", result: current.result, text });
-      else append({ id: current.id, kind: "reply", text });
-      clearCurrent();
-    }
-  }
+  });
 
   async function loop(): Promise<void> {
     for (;;) {
@@ -428,23 +404,16 @@ function runPages(): never {
         }
         if (req.control === "abort") {
           send({ type: "abort" });
-          if (current) {
-            append({ id: current.id, kind: "error", reason: "timeout", detail: "aborted by client (turn budget exceeded)." });
-            clearCurrent();
-          }
+          relay.fail("timeout", "aborted by client (turn budget exceeded).");
           continue;
         }
         if (req.id && typeof req.message === "string") {
-          current = { id: req.id };
           const reqId = req.id;
           timer = setTimeout(() => {
             send({ type: "abort" });
-            if (current?.id === reqId) {
-              append({ id: reqId, kind: "error", reason: "timeout", detail: "pi-pages produced no turn end in time." });
-            }
-            clearCurrent();
+            if (relay.currentId === reqId) relay.fail("timeout", "pi-pages produced no turn end in time.");
           }, TURN_BUDGET_MS + 60_000);
-          send({ type: "prompt", message: req.message, id: req.id });
+          relay.request(reqId, req.message);
         }
       }
       // writer closed; reopen for the next request.

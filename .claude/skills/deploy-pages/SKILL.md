@@ -80,6 +80,11 @@ PAGES_LOCATION: the driver resolves the pi-pages checkout from the `PI_PAGES_DIR
 - **THEN:** run the `clean` tool, surface the `detail` (point at `<stateDir>/logs/pages.log`), and retry once.
 - **EXAMPLES:** "pi-pages did not start", "no result within N min"
 
+### pi-pages rejected or aborted the turn
+- **IF:** a tool prints `kind:"error"` with reason `prompt_rejected` / `aborted`
+- **THEN:** the session is still up — surface the `detail`, retry the request once with the `send` tool, then run `down`.
+- **EXAMPLES:** "Agent is already processing", "turn was aborted before it concluded"
+
 ## Report
 
 Relay pi-pages's result faithfully — the `result` object carries `status` (ok|failed), `action`, `url` (the shareable link), `preview_url` (the pages.dev URL, live immediately), and `error`. A publish succeeded ONLY when the line is `kind:"result"` AND `status==ok`; surface the `url` (and `preview_url`) to the user. On anything else, report it as failed and surface `error`.

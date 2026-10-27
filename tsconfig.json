@@ -26,6 +26,6 @@
     "skipLibCheck": true,
     "types": ["node", "bun"]
   },
-  "include": ["shared/**/*.ts", "pages/**/*.ts"],
+  "include": ["shared/**/*.ts", "pages/**/*.ts", ".claude/skills/deploy-pages/tools/**/*.ts"],
   "exclude": ["node_modules"]
 }
