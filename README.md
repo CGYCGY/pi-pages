@@ -11,7 +11,7 @@ Gated single-purpose sibling of `pi-deployment-manager`: where the manager deplo
 
 ## The gate
 
-pi-pages's LLM sees **exactly four verbs** and nothing else — built-in tools (bash/read/write/edit/glob) are disabled (`pi --mode rpc --no-builtin-tools --no-extensions -nc`) and the active set is pinned to the verbs at session start.
+pi-pages's LLM sees **exactly four verbs** and nothing else — built-in tools (bash/read/write/edit/glob) are disabled (`pi --mode rpc --no-builtin-tools --no-extensions -nc -ns -np`) and the active set is pinned to the verbs at session start.
 
 | verb | r/w | does |
 |------|-----|------|

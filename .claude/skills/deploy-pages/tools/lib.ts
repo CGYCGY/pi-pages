@@ -104,13 +104,17 @@ export function paths(stateDir: string): Paths {
 /**
  * The pi argv that summons pi-pages in RPC mode. THE GATE: --no-builtin-tools makes
  * bash/read/write/edit/glob unrepresentable; --no-extensions blocks other extensions from
- * re-adding tools; -nc drops ambient AGENTS.md/CLAUDE.md. --mode rpc = stdin/stdout JSONL.
+ * re-adding tools; -nc drops ambient AGENTS.md/CLAUDE.md; -ns keeps user-level skills out of
+ * the system prompt; -np stops a "/"-prefixed caller message being expanded as a prompt
+ * template. --mode rpc = stdin/stdout JSONL.
  */
 export function piArgs(pagesDir: string, cfg: PagesCfg): string[] {
   const args = [
     "--no-extensions",
     "--no-builtin-tools",
     "-nc",
+    "-ns",
+    "-np",
     "--mode",
     "rpc",
     "-e",
